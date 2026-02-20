@@ -1,4 +1,4 @@
-# PoolChain 🎱
+# billiar pool
 
 > **A P2P Billiard Game built on Trac Intercom** — play pool with moves broadcast over the Intercom peer-to-peer sidechain network.
 
