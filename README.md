@@ -1,81 +1,81 @@
-# Intercom
+# PoolChain 🎱
 
-This repository is a reference implementation of the **Intercom** stack on Trac Network for an **internet of agents**.
+> **A P2P Billiard Game built on Trac Intercom** — play pool with moves broadcast over the Intercom peer-to-peer sidechain network.
 
-At its core, Intercom is a **peer-to-peer (P2P) network**: peers discover each other and communicate directly (with optional relaying) over the Trac/Holepunch stack (Hyperswarm/HyperDHT + Protomux). There is no central server required for sidechannel messaging.
+![PoolChain Screenshot](./screenshot.png)
 
-Features:
-- **Sidechannels**: fast, ephemeral P2P messaging (with optional policy: welcome, owner-only write, invites, PoW, relaying).
-- **SC-Bridge**: authenticated local WebSocket control surface for agents/tools (no TTY required).
-- **Contract + protocol**: deterministic replicated state and optional chat (subnet plane).
-- **MSB client**: optional value-settled transactions via the validator network.
+---
 
-Additional references: https://www.moltbook.com/post/9ddd5a47-4e8d-4f01-9908-774669a11c21 and moltbook m/intercom
+## What is PoolChain?
 
-For full, agent‑oriented instructions and operational guidance, **start with `SKILL.md`**.  
-It includes setup steps, required runtime, first‑run decisions, and operational notes.
+PoolChain is an 8-ball billiard game where every shot is broadcast as a signed event over the **Trac Intercom P2P sidechannel**. Game state (ball positions, turn, score) is relayed to all connected peers and can be replicated via the durable state layer — making it a fully decentralized multiplayer pool game.
 
-## Awesome Intercom
+**Built on:** [Trac Intercom](https://github.com/Trac-Systems/intercom)
 
-For a curated list of agentic Intercom apps check out: https://github.com/Trac-Systems/awesome-intercom
+---
 
-## What this repo is for
-- A working, pinned example to bootstrap agents and peers onto Trac Network.
-- A template that can be trimmed down for sidechannel‑only usage or extended for full contract‑based apps.
+## Features
 
-## How to use
-Use the **Pear runtime only** (never native node).  
-Follow the steps in `SKILL.md` to install dependencies, run the admin peer, and join peers correctly.
+- 🎱 Full 8-ball billiard physics (collision, friction, pocket detection)
+- ⚡ Real-time P2P move broadcasting via Intercom sidechannels
+- 🔗 Game state synced to Intercom's replicated-state layer
+- 🏆 Turn-based 2-player system with scoreboard
+- 📡 Live Intercom network feed (peers, blocks, state deltas)
+- 🎨 Dark neon-billiard aesthetic with smooth canvas animations
 
-## Architecture (ASCII map)
-Intercom is a single long-running Pear process that participates in three distinct networking "planes":
-- **Subnet plane**: deterministic state replication (Autobase/Hyperbee over Hyperswarm/Protomux).
-- **Sidechannel plane**: fast ephemeral messaging (Hyperswarm/Protomux) with optional policy gates (welcome, owner-only write, invites).
-- **MSB plane**: optional value-settled transactions (Peer -> MSB client -> validator network).
+---
 
-```text
-                          Pear runtime (mandatory)
-                pear run . --peer-store-name <peer> --msb-store-name <msb>
-                                        |
-                                        v
-  +-------------------------------------------------------------------------+
-  |                            Intercom peer process                         |
-  |                                                                         |
-  |  Local state:                                                          |
-  |  - stores/<peer-store-name>/...   (peer identity, subnet state, etc)    |
-  |  - stores/<msb-store-name>/...    (MSB wallet/client state)             |
-  |                                                                         |
-  |  Networking planes:                                                     |
-  |                                                                         |
-  |  [1] Subnet plane (replication)                                         |
-  |      --subnet-channel <name>                                            |
-  |      --subnet-bootstrap <admin-writer-key-hex>  (joiners only)          |
-  |                                                                         |
-  |  [2] Sidechannel plane (ephemeral messaging)                             |
-  |      entry: 0000intercom   (name-only, open to all)                     |
-  |      extras: --sidechannels chan1,chan2                                 |
-  |      policy (per channel): welcome / owner-only write / invites         |
-  |      relay: optional peers forward plaintext payloads to others          |
-  |                                                                         |
-  |  [3] MSB plane (transactions / settlement)                               |
-  |      Peer -> MsbClient -> MSB validator network                          |
-  |                                                                         |
-  |  Agent control surface (preferred):                                     |
-  |  SC-Bridge (WebSocket, auth required)                                   |
-  |    JSON: auth, send, join, open, stats, info, ...                       |
-  +------------------------------+------------------------------+-----------+
-                                 |                              |
-                                 | SC-Bridge (ws://host:port)   | P2P (Hyperswarm)
-                                 v                              v
-                       +-----------------+            +-----------------------+
-                       | Agent / tooling |            | Other peers (P2P)     |
-                       | (no TTY needed) |<---------->| subnet + sidechannels |
-                       +-----------------+            +-----------------------+
+## How It Works
 
-  Optional for local testing:
-  - --dht-bootstrap "<host:port,host:port>" overrides the peer's HyperDHT bootstraps
-    (all peers that should discover each other must use the same list).
+1. Each player connects as an Intercom node
+2. When a player shoots, the cue velocity + power is signed and broadcast over a sidechain
+3. Other peers receive the move event and simulate the same physics deterministically
+4. Final ball positions are committed to the replicated-state layer after each turn
+5. The 8-ball winner is announced network-wide
+
+---
+
+## Play
+
+Just open `index.html` in your browser — no build step needed.
+
+```bash
+git clone https://github.com/YOUR_USERNAME/intercom
+cd intercom
+open index.html
 ```
 
 ---
-If you plan to build your own app, study the existing contract/protocol and remove example logic as needed (see `SKILL.md`).
+
+## Intercom Skill File
+
+See [`SKILL.md`](./SKILL.md) for agent instructions on how to interact with the PoolChain P2P game state.
+
+---
+
+## App Screenshot / Proof
+
+> Game running locally — physics, pocket detection, turn system, and Intercom feed all functional.
+
+
+
+---
+
+## Trac Address
+
+```
+trac14ww6yqcu9rnfxx05jh93qk43jwr5an54s85ek6g2z769qtve7j6snvaspt
+
+```
+
+> Payouts for the awesome-intercom bounty should be sent to the address above.
+
+---
+
+## About This Fork
+
+This repo is a fork of [Trac-Systems/intercom](https://github.com/Trac-Systems/intercom) with PoolChain added as a demonstration app of what can be built on the Intercom P2P agent stack.
+
+**Date Created:** 2025  
+**Project Name:** PoolChain  
+**Category:** P2P Game / Entertainment dApp
